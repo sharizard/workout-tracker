@@ -26,14 +26,14 @@ export default function AuthForm() {
         <Card className="w-full border-0 shadow-none">
             <form action={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" name="email" type="email" required placeholder="m@example.com" />
+                    <Label htmlFor="email" className="text-gray-200">Email</Label>
+                    <Input id="email" name="email" type="email" required placeholder="m@example.com" className="bg-black/20 border-white/10 text-white placeholder:text-gray-500" />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input id="password" name="password" type="password" required />
+                    <Label htmlFor="password" className="text-gray-200">Password</Label>
+                    <Input id="password" name="password" type="password" required className="bg-black/20 border-white/10 text-white" />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/25" disabled={isLoading}>
                     {isLoading ? 'Logging in...' : 'Login'}
                 </Button>
             </form>
