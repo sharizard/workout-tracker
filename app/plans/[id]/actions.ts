@@ -27,7 +27,7 @@ export async function createWeek(planId: string, startDate?: string) {
     return { data }
 }
 
-export async function saveLog(weekId: string, exerciseId: string, dayNumber: number, weight: string, notes: string, difficulty: string) {
+export async function saveLog(weekId: string, exerciseId: string, dayNumber: number, weight: string, sets: number, reps: string, notes: string, difficulty: string) {
     const supabase = await createClient()
 
     // Check if week is locked
@@ -43,6 +43,8 @@ export async function saveLog(weekId: string, exerciseId: string, dayNumber: num
             exercise_id: exerciseId,
             day_number: dayNumber,
             weight_lifted: weight,
+            sets: sets,
+            reps: reps,
             notes: notes,
             difficulty: difficulty
         }, {

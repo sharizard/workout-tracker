@@ -351,7 +351,7 @@ export default function PlanWizard({ initialPlan, initialDays, isEditing = false
                                                                 <div className="w-24">
                                                                     <Input
                                                                         type="number"
-                                                                        placeholder="Sets"
+                                                                        placeholder="Target Sets"
                                                                         value={exercise.sets}
                                                                         onChange={(e) =>
                                                                             updateExercise(
@@ -365,7 +365,7 @@ export default function PlanWizard({ initialPlan, initialDays, isEditing = false
                                                                 </div>
                                                                 <div className="flex-1">
                                                                     <Input
-                                                                        placeholder="Reps (e.g. 8-12)"
+                                                                        placeholder="Target Reps (e.g. 8-12)"
                                                                         value={exercise.reps}
                                                                         onChange={(e) =>
                                                                             updateExercise(dayIndex, exIndex, 'reps', e.target.value)

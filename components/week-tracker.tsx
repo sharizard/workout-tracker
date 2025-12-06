@@ -36,6 +36,8 @@ type Log = {
     exercise_id: string
     day_number: number
     weight_lifted: string
+    sets: number
+    reps: string
     notes: string
     difficulty: string
 }
@@ -114,7 +116,7 @@ export default function WeekTracker({ planId, planDays, weeks, initialLogs }: We
         }
     }
 
-    const handleLogChange = (exerciseId: string, dayNumber: number, field: keyof Log, value: string) => {
+    const handleLogChange = (exerciseId: string, dayNumber: number, field: keyof Log, value: string | number) => {
         if (isLocked) return
         const key = `${exerciseId}-${dayNumber}`
         setLogs(prev => ({
@@ -135,7 +137,16 @@ export default function WeekTracker({ planId, planDays, weeks, initialLogs }: We
         if (!log) return
 
         setIsSaving(true)
-        const result = await saveLog(selectedWeekId, exerciseId, dayNumber, log.weight_lifted, log.notes || '', log.difficulty || '')
+        const result = await saveLog(
+            selectedWeekId,
+            exerciseId,
+            dayNumber,
+            log.weight_lifted,
+            log.sets ?? 0,
+            log.reps ?? '',
+            log.notes || '',
+            log.difficulty || ''
+        )
         setIsSaving(false)
 
         if (result.error) {
@@ -296,35 +307,55 @@ export default function WeekTracker({ planId, planDays, weeks, initialLogs }: We
                                 <CardContent className="space-y-8">
                                     {day.exercises.map((exercise) => {
                                         const key = `${exercise.id}-${day.day_order}`
-                                        const log = logs[key] || { weight_lifted: '', notes: '', difficulty: '' }
+                                        const log = logs[key] || { weight_lifted: '', sets: 0, reps: '', notes: '', difficulty: '' }
                                         return (
                                             <div key={exercise.id} className="border-b pb-6 last:border-0 last:pb-0">
                                                 <div className="flex justify-between items-start mb-4">
                                                     <div>
                                                         <h4 className="font-semibold text-lg">{exercise.name}</h4>
-                                                        <p className="text-sm text-gray-500">{exercise.sets} sets x {exercise.reps}</p>
+                                                        <p className="text-sm text-gray-500">Target: {exercise.sets} sets x {exercise.reps}</p>
                                                     </div>
                                                     {!isLocked && (
                                                         <Button
                                                             size="sm"
-                                                            variant="ghost"
                                                             onClick={() => handleSaveLog(exercise.id, day.day_order)}
                                                             disabled={isSaving}
                                                         >
-                                                            <Save className="h-4 w-4" />
+                                                            <Save className="mr-2 h-4 w-4" /> Save
                                                         </Button>
                                                     )}
                                                 </div>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                     <div className="space-y-4">
-                                                        <div className="space-y-2">
-                                                            <Label>Weight Lifted</Label>
-                                                            <Input
-                                                                placeholder="e.g. 100kg"
-                                                                value={log.weight_lifted}
-                                                                onChange={(e) => handleLogChange(exercise.id, day.day_order, 'weight_lifted', e.target.value)}
-                                                                disabled={isLocked}
-                                                            />
+                                                        <div className="flex gap-4">
+                                                            <div className="space-y-2 flex-1">
+                                                                <Label>Weight (kg)</Label>
+                                                                <Input
+                                                                    placeholder="e.g. 100"
+                                                                    value={log.weight_lifted}
+                                                                    onChange={(e) => handleLogChange(exercise.id, day.day_order, 'weight_lifted', e.target.value)}
+                                                                    disabled={isLocked}
+                                                                />
+                                                            </div>
+                                                            <div className="space-y-2 flex-1">
+                                                                <Label>Actual Sets</Label>
+                                                                <Input
+                                                                    type="number"
+                                                                    placeholder="e.g. 3"
+                                                                    value={log.sets || ''}
+                                                                    onChange={(e) => handleLogChange(exercise.id, day.day_order, 'sets', parseInt(e.target.value))}
+                                                                    disabled={isLocked}
+                                                                />
+                                                            </div>
+                                                            <div className="space-y-2 flex-1">
+                                                                <Label>Actual Reps</Label>
+                                                                <Input
+                                                                    placeholder="e.g. 10"
+                                                                    value={log.reps}
+                                                                    onChange={(e) => handleLogChange(exercise.id, day.day_order, 'reps', e.target.value)}
+                                                                    disabled={isLocked}
+                                                                />
+                                                            </div>
                                                         </div>
                                                         <div className="space-y-2">
                                                             <Label>Notes</Label>

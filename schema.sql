@@ -124,6 +124,8 @@ create table logs (
   exercise_id uuid references exercises on delete cascade not null,
   day_number int not null, -- 1, 2, 3... (corresponding to plan_days.day_order)
   weight_lifted text, -- e.g., "100kg"
+  sets int,
+  reps text,
   notes text,
   difficulty text, -- "Easy", "Medium", "Difficult"
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
@@ -175,4 +177,7 @@ create trigger on_auth_user_created
   for each row execute procedure public.handle_new_user();
 
 -- MIGRATION: Run this if you already have the table
+-- MIGRATION: Run this if you already have the table
 -- alter table logs add column difficulty text;
+-- alter table logs add column sets int;
+-- alter table logs add column reps text;
