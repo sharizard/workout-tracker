@@ -38,7 +38,7 @@ export default async function EditPlanPage({ params }: { params: Promise<{ id: s
     // Sort exercises
     const sortedPlanDays = planDays?.map(day => ({
         ...day,
-        exercises: day.exercises.sort((a: any, b: any) => {
+        exercises: day.exercises.sort((a: { created_at: string }, b: { created_at: string }) => {
             return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         })
     })) || []

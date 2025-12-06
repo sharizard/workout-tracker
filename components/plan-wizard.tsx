@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { Textarea } from '@/components/ui/textarea'
 import { Plus, Trash2 } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -45,23 +44,25 @@ export default function PlanWizard({ initialPlan, initialDays, isEditing = false
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     // When editing, if user changes days per week, we might need to adjust days array
+    // ... references Textarea removal below by excluding it from file... wait I can't exclude easily.
+    // I will replace usage areas.
+
+    /* Replacement 1: useEffect fix */
     useEffect(() => {
-        if (isEditing && daysPerWeek) {
+        if (daysPerWeek) {
             const count = parseInt(daysPerWeek)
-            if (days.length < count) {
-                // Add more days
-                const newDays = [...days]
-                for (let i = days.length; i < count; i++) {
-                    newDays.push({ headline: '', exercises: [] })
+            setDays(currentDays => {
+                if (currentDays.length < count) {
+                    const newDays = [...currentDays]
+                    for (let i = currentDays.length; i < count; i++) {
+                        newDays.push({ headline: '', exercises: [] })
+                    }
+                    return newDays
+                } else if (currentDays.length > count) {
+                    return currentDays.slice(0, count)
                 }
-                setDays(newDays)
-            } else if (days.length > count) {
-                // Warn or just slice? For now let's just slice but ideally warn.
-                // Slicing might lose data if user reduces days.
-                // Let's just keep them in state but only save 'count' amount?
-                // Or just update state.
-                setDays(days.slice(0, count))
-            }
+                return currentDays
+            })
         }
     }, [daysPerWeek, isEditing])
 
@@ -89,7 +90,8 @@ export default function PlanWizard({ initialPlan, initialDays, isEditing = false
         }
     }
 
-    const handleDayChange = (index: number, field: keyof Day, value: any) => {
+    /* Replacement 2: handleDayChange any fix */
+    const handleDayChange = (index: number, field: keyof Day, value: string) => {
         const newDays = [...days]
         newDays[index] = { ...newDays[index], [field]: value }
         setDays(newDays)
@@ -107,7 +109,8 @@ export default function PlanWizard({ initialPlan, initialDays, isEditing = false
         setDays(newDays)
     }
 
-    const updateExercise = (dayIndex: number, exerciseIndex: number, field: keyof Exercise, value: any) => {
+    /* Replacement 3: updateExercise any fix */
+    const updateExercise = (dayIndex: number, exerciseIndex: number, field: keyof Exercise, value: string | number) => {
         const newDays = [...days]
         newDays[dayIndex].exercises[exerciseIndex] = {
             ...newDays[dayIndex].exercises[exerciseIndex],
@@ -263,8 +266,9 @@ export default function PlanWizard({ initialPlan, initialDays, isEditing = false
 
             router.push('/')
             router.refresh()
-        } catch (error: any) {
-            toast.error(error.message || 'Failed to save plan')
+        } catch (error: unknown) {
+            const msg = error instanceof Error ? error.message : 'Failed to save plan'
+            toast.error(msg)
         } finally {
             setIsSubmitting(false)
         }

@@ -54,7 +54,7 @@ export default async function Dashboard() {
       ) : (
         <div className="text-center py-20 bg-gray-50 rounded-lg border border-dashed border-gray-300">
           <h2 className="text-xl font-semibold mb-2">No plans found</h2>
-          <p className="text-gray-500 mb-6">You haven't created any workout plans yet.</p>
+          <p className="text-gray-500 mb-6">You haven&apos;t created any workout plans yet.</p>
           <Link href="/plans/create">
             <Button variant="default">Create your first plan</Button>
           </Link>

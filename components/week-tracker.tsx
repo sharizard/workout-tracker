@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -56,8 +56,15 @@ interface WeekTrackerProps {
 }
 
 export default function WeekTracker({ planId, planDays, weeks, initialLogs }: WeekTrackerProps) {
-    const [selectedWeekId, setSelectedWeekId] = useState<string>(weeks.length > 0 ? weeks[0].id : '')
-    const [logs, setLogs] = useState<Record<string, Log>>({})
+    const [selectedWeekId, setSelectedWeekId] = useState<string>(() => weeks.length > 0 ? weeks[0].id : '')
+    const [logs, setLogs] = useState<Record<string, Log>>(() => {
+        const logMap: Record<string, Log> = {}
+        initialLogs.forEach(log => {
+            const key = `${log.exercise_id}-${log.day_number}`
+            logMap[key] = log
+        })
+        return logMap
+    })
     const [isSaving, setIsSaving] = useState(false)
 
     // Ad-hoc exercise state
@@ -70,23 +77,6 @@ export default function WeekTracker({ planId, planDays, weeks, initialLogs }: We
     // New Week state
     const [isCreatingWeek, setIsCreatingWeek] = useState(false)
     const [newWeekDate, setNewWeekDate] = useState<Date | undefined>(new Date())
-
-    // Initialize logs state from props
-    useEffect(() => {
-        const logMap: Record<string, Log> = {}
-        initialLogs.forEach(log => {
-            const key = `${log.exercise_id}-${log.day_number}`
-            logMap[key] = log
-        })
-        setLogs(logMap)
-    }, [initialLogs])
-
-    // Update selected week if new weeks come in (e.g. after creation)
-    useEffect(() => {
-        if (!selectedWeekId && weeks.length > 0) {
-            setSelectedWeekId(weeks[0].id)
-        }
-    }, [weeks, selectedWeekId])
 
     const currentWeek = weeks.find(w => w.id === selectedWeekId)
     const isLocked = currentWeek?.is_locked ?? false
@@ -196,7 +186,7 @@ export default function WeekTracker({ planId, planDays, weeks, initialLogs }: We
                             <SelectValue placeholder="Select Week" />
                         </SelectTrigger>
                         <SelectContent className="bg-[#1a2332] border-white/10 text-white">
-                            {weeks.map((week, index) => (
+                            {weeks.map((week) => (
                                 <SelectItem key={week.id} value={week.id} className="focus:bg-white/10 focus:text-white">
                                     Week of {new Date(week.start_date).toLocaleDateString()} {week.is_locked ? '(Completed)' : '(Active)'}
                                 </SelectItem>

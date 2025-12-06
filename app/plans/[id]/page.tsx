@@ -50,19 +50,30 @@ export default async function PlanDetailsPage({ params }: { params: Promise<{ id
     // For now, let's fetch logs for the weeks we fetched.
     const weekIds = weeks?.map(w => w.id) || []
 
-    let logs: any[] = []
+    type Log = {
+        exercise_id: string
+        day_number: number
+        weight_lifted: string
+        sets: number
+        reps: string
+        notes: string
+        difficulty: string
+    }
+
+    let logs: Log[] = []
     if (weekIds.length > 0) {
         const { data: logsData } = await supabase
             .from('logs')
             .select('*')
             .in('week_id', weekIds)
-        logs = logsData || []
+        // Ensure data matches Log structure or cast if DB returns partials (usually full rows)
+        logs = (logsData as unknown as Log[]) || []
     }
 
     // Sort exercises within days just to be safe (though usually created in order)
     const sortedPlanDays = planDays?.map(day => ({
         ...day,
-        exercises: day.exercises.sort((a: any, b: any) => {
+        exercises: day.exercises.sort((a: { created_at: string }, b: { created_at: string }) => {
             // Assuming created_at sort or similar. If no order field, created_at is fine.
             return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         })
