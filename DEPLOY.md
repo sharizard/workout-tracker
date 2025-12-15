@@ -18,8 +18,8 @@ Click "Deploy". Vercel will build your application and provide you with a live U
 
 ## 4. Supabase Auth Configuration
 Once deployed, go to your Supabase Dashboard -> Authentication -> URL Configuration.
-- Add your Vercel deployment URL (e.g., `https://fitness-tracker.vercel.app`) to "Site URL".
-- Add `https://fitness-tracker.vercel.app/auth/callback` to "Redirect URLs".
+- Add your Vercel deployment URL (e.g., `https://workout-tracker.vercel.app`) to "Site URL".
+- Add `https://workout-tracker.vercel.app/auth/callback` to "Redirect URLs".
 
 ## 5. CI/CD
 A GitHub Action has been set up in `.github/workflows/ci.yml`. It will run `npm run lint` and `npm run build` on every push to `main` or pull request.

@@ -17,7 +17,7 @@ export default function LoginPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                     </div>
-                    <CardTitle className="text-3xl font-bold tracking-tight text-white">Fitness Tracker</CardTitle>
+                    <CardTitle className="text-3xl font-bold tracking-tight text-white">Workout Tracker</CardTitle>
                     <CardDescription className="text-gray-400 text-base">Sign in to your account</CardDescription>
                 </CardHeader>
                 <CardContent>
